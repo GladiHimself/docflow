@@ -44,12 +44,13 @@ public class FileRecordService {
         return fileRecordRepository.save(file); 
     }
 
-    public boolean deleteFileRecord(Long id) {
-        if (fileRecordRepository.existsById(id)) {
-            fileRecordRepository.deleteById(id);
-            return true;
-        }
+    public Boolean deleteFile(Long id) {
+    try {
+        fileRecordRepository.deleteById(id);
+        return true;
+    } catch (Exception e) {
         return false;
     }
+}
 
 }

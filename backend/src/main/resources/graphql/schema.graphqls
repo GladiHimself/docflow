@@ -1,0 +1,29 @@
+type FileRecord {
+    id: ID!
+    fileName: String!
+    fileType: String!
+    status: FileStatus!
+    recordCount: Int
+    notes: String
+    uploadedAt: String!
+    processedAt: String
+}
+
+enum FileStatus {
+    UPLOADED
+    PROCESSING
+    PROCESSED
+    FAILED
+}
+
+type Query {
+    getAllFiles: [FileRecord!]!
+    getFile(id: ID!): FileRecord
+    getFilesByStatus(status: FileStatus!): [FileRecord!]!
+}
+
+type Mutation {
+    createFile(fileName: String!, fileType: String!): FileRecord!
+    updateFileStatus(id: ID!, status: FileStatus!): FileRecord
+    deleteFile(id: ID!): Boolean
+}
