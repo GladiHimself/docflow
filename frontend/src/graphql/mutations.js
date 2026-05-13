@@ -1,0 +1,32 @@
+import { gql } from '@apollo/client/core';
+
+//create file mutation
+export const CREATE_FILE = gql`
+    mutation CreateFile($fileName: String!, $fileType: String!) {
+        createFile(fileName: $fileName, fileType: $fileType) {
+            id
+            fileName
+            fileType
+            status
+            uploadedAt
+        }
+    }
+`;
+
+//update file status mutation
+export const UPDATE_FILE_STATUS = gql`
+    mutation UpdateFileStatus($id: ID!, $status: FileStatus!) {
+        updateFileStatus(id: $id, status: $status) {
+            id
+            fileName
+            status
+        }
+    }
+`;
+
+// delete file mutation
+export const DELETE_FILE = gql`
+    mutation DeleteFile($id: ID!) {
+        deleteFile(id: $id)
+    }
+`;
