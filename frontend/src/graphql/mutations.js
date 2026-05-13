@@ -18,7 +18,7 @@ export const UPDATE_FILE_STATUS = gql`
     mutation UpdateFileStatus($id: ID!, $status: FileStatus!) {
         updateFileStatus(id: $id, status: $status) {
             id
-            fileName
+            fileName 
             status
         }
     }
