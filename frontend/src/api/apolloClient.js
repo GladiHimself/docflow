@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from '@apollo/client/link/http';
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:8081/graphql',  // your Spring Boot GraphQL endpoint
+    uri: import.meta.env.VITE_API_URL || 'http://localhost:8081/graphql',  // your Spring Boot GraphQL endpoint
 });
 
 // InMemoryCache stores query results locally

@@ -1,0 +1,36 @@
+services:
+
+  # ─── Backend Service ──────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: docflow-backend
+    ports:
+      - "8081:8081"
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:h2:mem:docflowdb
+    - SPRING_DATASOURCE_USERNAME=sa
+    - SPRING_DATASOURCE_PASSWORD=
+    - SERVER_PORT=8081
+    networks:
+      - docflow-network
+
+  # ─── Frontend Service ─────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: docflow-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - docflow-network
+
+# ─── Network Definition ─────────────────────────────────────
+networks:
+  docflow-network:
+    driver: bridge
+
