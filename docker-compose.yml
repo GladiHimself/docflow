@@ -1,5 +1,20 @@
 services:
 
+# ─── PostgreSQL Database ──────────────────────────────────
+  postgres:
+    image: postgres:16-alpine        # official PostgreSQL image
+    container_name: docflow-postgres
+    environment:
+      POSTGRES_DB: docflowdb         # creates this database automatically
+      POSTGRES_USER: docflow_user    # creates this user automatically
+      POSTGRES_PASSWORD: docflow123  # sets this password
+    ports:
+      - "5432:5432"                  # expose so we can connect locally too
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # persists data between restarts
+    networks:
+      - docflow-network
+
   # ─── Backend Service ──────────────────────────────────────
   backend:
     build:
@@ -9,10 +24,14 @@ services:
     ports:
       - "8081:8081"
     environment:
-    - SPRING_DATASOURCE_URL=jdbc:h2:mem:docflowdb
-    - SPRING_DATASOURCE_USERNAME=sa
-    - SPRING_DATASOURCE_PASSWORD=
-    - SERVER_PORT=8081
+      # Override application.properties for Docker environment
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docflowdb
+      - SPRING_DATASOURCE_USERNAME=docflow_user
+      - SPRING_DATASOURCE_PASSWORD=docflow123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SERVER_PORT=8081
+    depends_on:
+      - postgres                     # wait for postgres to start first
     networks:
       - docflow-network
 
@@ -28,6 +47,11 @@ services:
       - backend
     networks:
       - docflow-network
+
+# ─── Named Volume ─────────────────────────────────────────
+# This keeps PostgreSQL data even when containers stop
+volumes:
+  postgres_data:
 
 # ─── Network Definition ─────────────────────────────────────
 networks:
