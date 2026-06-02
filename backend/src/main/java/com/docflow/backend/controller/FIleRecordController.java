@@ -1,6 +1,7 @@
 package com.docflow.backend.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -54,4 +55,8 @@ public class FIleRecordController {
         return fileRecordService.deleteFile(id);
     }
 
+    @MutationMapping    // maps to "requestUpload" in schema
+    public Map<String, String> requestUpload(@Argument String fileName, @Argument String fileType) {
+        return fileRecordService.requestUpload(fileName, fileType);
+    }
 }

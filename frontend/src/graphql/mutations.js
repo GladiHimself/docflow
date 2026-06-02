@@ -30,3 +30,13 @@ export const DELETE_FILE = gql`
         deleteFile(id: $id)
     }
 `;
+
+export const REQUEST_UPLOAD = gql`
+  mutation RequestUpload($fileName: String!, $fileType: String!) {
+    requestUpload(fileName: $fileName, fileType: $fileType) {
+      fileId
+      uploadUrl
+      s3Key
+    }
+  }
+`;

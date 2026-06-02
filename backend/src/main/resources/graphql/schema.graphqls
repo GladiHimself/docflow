@@ -16,6 +16,12 @@ enum FileStatus {
     FAILED
 }
 
+type UploadRequest {
+    fileId: ID!
+    uploadUrl: String!
+    s3Key: String!
+}
+
 type Query {
     getAllFiles: [FileRecord!]!
     getFile(id: ID!): FileRecord
@@ -23,6 +29,7 @@ type Query {
 }
 
 type Mutation {
+    requestUpload(fileName: String!, fileType: String!): UploadRequest!
     createFile(fileName: String!, fileType: String!): FileRecord!
     updateFileStatus(id: ID!, status: FileStatus!): FileRecord
     deleteFile(id: ID!): Boolean
