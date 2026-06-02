@@ -41,6 +41,9 @@ public class FileRecord {
     @Column
     private LocalDateTime processedAt;  // when was it processed
 
+    @Column
+    private String s3Key;         // S3 key for where the file is stored
+
     @PrePersist                         // runs automatically before saving
     public void prePersist() {
         this.uploadedAt = LocalDateTime.now();
