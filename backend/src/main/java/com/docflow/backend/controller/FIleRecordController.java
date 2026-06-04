@@ -21,42 +21,49 @@ public class FIleRecordController {
 
     private final FileRecordService fileRecordService;
 
-    //Queries
+    // Queries
 
-    @QueryMapping   // maps to "getAllFiles" in schema
+    @QueryMapping // maps to "getAllFiles" in schema
     public List<FileRecord> getAllFiles() {
         return fileRecordService.getAllFiles();
     }
 
-    @QueryMapping   // maps to "getFile" in schema
+    @QueryMapping // maps to "getFile" in schema
     public Optional<FileRecord> getFile(@Argument Long id) {
         return fileRecordService.getFileById(id);
     }
 
-    @QueryMapping   // maps to "getFilesByStatus" in schema
+    @QueryMapping // maps to "getFilesByStatus" in schema
     public List<FileRecord> getFilesByStatus(@Argument FileStatus status) {
         return fileRecordService.getFilesByStatus(status);
     }
 
-    //Mutations
+    // Mutations
 
-    @MutationMapping    // maps to "createFile" in schema
+    @MutationMapping // maps to "createFile" in schema
     public FileRecord createFile(@Argument String fileName, @Argument String fileType) {
         return fileRecordService.createFileRecord(fileName, fileType);
     }
 
-    @MutationMapping    // maps to "updateFileStatus" in schema
+    @MutationMapping // maps to "updateFileStatus" in schema
     public FileRecord updateFileStatus(@Argument Long id, @Argument FileStatus status) {
-        return fileRecordService.updateStatus(id, status);  
+        return fileRecordService.updateStatus(id, status);
     }
 
-    @MutationMapping    // maps to "deleteFile" in schema
+    @MutationMapping // maps to "deleteFile" in schema
     public boolean deleteFile(@Argument Long id) {
         return fileRecordService.deleteFile(id);
     }
 
-    @MutationMapping    // maps to "requestUpload" in schema
+    @MutationMapping // maps to "requestUpload" in schema
     public Map<String, String> requestUpload(@Argument String fileName, @Argument String fileType) {
         return fileRecordService.requestUpload(fileName, fileType);
+    }
+
+    @MutationMapping
+    public FileRecord updateFileByS3Key(
+            @Argument String s3Key,
+            @Argument Integer recordCount) {
+        return fileRecordService.updateFileByS3Key(s3Key, recordCount);
     }
 }

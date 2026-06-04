@@ -1,6 +1,7 @@
 package com.docflow.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,7 @@ public interface FileRecordRepository extends JpaRepository<FileRecord, Long> {
 
     // finds all files with a specific file type
     List<FileRecord> findByFileType(String fileType);
+
+    Optional<FileRecord> findByS3Key(String s3Key);
 
 }

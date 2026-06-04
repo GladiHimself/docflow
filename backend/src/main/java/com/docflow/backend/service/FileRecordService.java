@@ -78,4 +78,14 @@ public class FileRecordService {
                 "uploadUrl", uploadUrl,
                 "s3Key", s3Key);
     }
+
+    public FileRecord updateFileByS3Key(String s3Key, Integer recordCount) {
+        FileRecord file = fileRecordRepository.findByS3Key(s3Key)
+                .orElseThrow(() -> new RuntimeException("File not found: " + s3Key));
+        file.setStatus(FileStatus.PROCESSED);
+        file.setRecordCount(recordCount);
+        file.setProcessedAt(java.time.LocalDateTime.now());
+        file.setNotes("Processed by Lambda");
+        return fileRecordRepository.save(file);
+    }
 }
