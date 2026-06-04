@@ -33,4 +33,5 @@ type Mutation {
     createFile(fileName: String!, fileType: String!): FileRecord!
     updateFileStatus(id: ID!, status: FileStatus!): FileRecord
     deleteFile(id: ID!): Boolean
+    updateFileByS3Key(s3Key: String!, recordCount: Int!): FileRecord
 }
