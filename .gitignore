@@ -34,3 +34,8 @@ Thumbs.db
 
 # ─── Docker ───────────────────────────────────────────────
 docker-compose.override.yml
+
+# Docker build artifacts
+*.tar.gz
+*.tar
+docflow-backend.tar.gz
