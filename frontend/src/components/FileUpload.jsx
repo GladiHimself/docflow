@@ -66,12 +66,12 @@ function FileUpload() {
 
   return (
     <div style={styles.container}>
-      <h3>Upload File to S3</h3>
+      <h3>Upload File to DocFlow</h3>
       <form onSubmit={handleSubmit} style={styles.form}>
 
         {/* File picker — user selects actual file from their computer */}
         <div style={styles.field}>
-          <label>Select File:</label>
+          <label style={{ color: '#374151', fontWeight: '600', fontSize: '0.85rem' }}>Select File:</label>
           <input
             type="file"
             onChange={handleFileChange}
@@ -82,7 +82,7 @@ function FileUpload() {
 
         {/* Auto-filled from selected file, but user can edit */}
         <div style={styles.field}>
-          <label>File Name:</label>
+          <label style={{ color: '#374151', fontWeight: '600', fontSize: '0.85rem' }}>File Name:</label>
           <input
             type="text"
             value={fileName}
@@ -93,7 +93,7 @@ function FileUpload() {
         </div>
 
         <div style={styles.field}>
-          <label>File Type:</label>
+          <label style={{ color: '#374151', fontWeight: '600', fontSize: '0.85rem' }}>File Type:</label>
           <select
             value={fileType}
             onChange={(e) => setFileType(e.target.value)}
@@ -106,7 +106,7 @@ function FileUpload() {
         </div>
 
         <button type="submit" disabled={uploading} style={styles.button}>
-          {uploading ? 'Uploading to S3...' : 'Upload File'}
+          {uploading ? '⏳ Uploading...' : '☁️ Upload to DocFlow'}
         </button>
 
       </form>
@@ -115,10 +115,11 @@ function FileUpload() {
 }
 
 const styles = {
-  container: { backgroundColor: '#f9f9f9', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', border: '1px solid #ddd' },
+  container: {
+  backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '16px', marginBottom: '1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 8px 32px rgba(0,0,0,0.08)' },
   form: { display: 'flex', flexDirection: 'column', gap: '1rem' },
   field: { display: 'flex', flexDirection: 'column', gap: '0.3rem' },
-  input: { padding: '0.5rem', fontSize: '1rem', borderRadius: '4px', border: '1px solid #ccc' },
+  input: { padding: '0.5rem', fontSize: '1rem', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: '#f8fafc', color: '#1a1a2e' },
   button: { padding: '0.7rem', backgroundColor: '#1a1a2e', color: 'white', border: 'none', borderRadius: '4px', fontSize: '1rem', cursor: 'pointer' }
 };
 
