@@ -12,8 +12,8 @@ function FileList() {
   if (error) return <p style={{color: 'red'}}>Error: {error.message}</p>;
 
   return (
-    <div>
-      <h3>All Files ({data.getAllFiles.length})</h3>
+  <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0' }}>
+    <h3 style={{ margin: '0 0 1rem 0', color: '#1a1a2e' }}>All Files ({data.getAllFiles.length})</h3>
 
       {data.getAllFiles.length === 0 ? (
         <p style={styles.empty}>No files yet. Upload one above!</p>
@@ -62,7 +62,7 @@ function getStatusColor(status) {
   switch(status) {
     case 'UPLOADED':   return '#3498db';  // blue
     case 'PROCESSING': return '#f39c12';  // orange
-    case 'COMPLETED':  return '#27ae60';  // green
+    case 'PROCESSED':  return '#27ae60';  // green
     case 'FAILED':     return '#e74c3c';  // red
     default:           return '#95a5a6';  // grey
   }
@@ -75,15 +75,17 @@ const styles = {
     gap: '0.8rem',
   },
   card: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    border: '1px solid #ddd',
-    cursor: 'pointer',         // shows hand cursor on hover
-  },
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '1rem 1.2rem',
+  backgroundColor: '#f8fafc',
+  borderRadius: '10px',
+  border: '1px solid #e2e8f0',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+},
   cardLeft: {
     display: 'flex',
     alignItems: 'center',
