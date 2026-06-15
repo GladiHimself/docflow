@@ -7,15 +7,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final  S3Presigner s3Presigner;
+    private final S3Presigner s3Presigner;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
@@ -35,17 +37,31 @@ public class S3Service {
 
         // Generate pre-signed URL valid for 15 minutes
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r -> r
-                .signatureDuration(Duration.ofMinutes(15))  // URL valid for 15 mins
-                .putObjectRequest(putObjectRequest)
-        );
+                .signatureDuration(Duration.ofMinutes(15)) // URL valid for 15 mins
+                .putObjectRequest(putObjectRequest));
         return presignedRequest.url().toString(); // return URL as string
 
     }
 
-        public String extractS3KeyFromUrl(String presignedUrl) {
-            String path = presignedUrl.split("\\?")[0]; // remove query params
-            String[] parts = path.split(".amazonaws.com/");
-            return parts[1]; //return "uploads/uuid-filename"
-        }
+    public String extractS3KeyFromUrl(String presignedUrl) {
+        String path = presignedUrl.split("\\?")[0]; // remove query params
+        String[] parts = path.split(".amazonaws.com/");
+        return parts[1]; // return "uploads/uuid-filename"
+    }
+
+    // for download URL, we can generate a pre-signed GET URL similarly, but for now
+    // we just return the S3 key
+    public String generatePresignedDownloadUrl(String s3Key) {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(s3Key)
+                .build();
+
+        PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(r -> r
+                .signatureDuration(Duration.ofMinutes(15))
+                .getObjectRequest(getObjectRequest));
+
+        return presignedRequest.url().toString();
+    }
 
 }

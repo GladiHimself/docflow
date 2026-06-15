@@ -66,4 +66,9 @@ public class FIleRecordController {
             @Argument Integer recordCount) {
         return fileRecordService.updateFileByS3Key(s3Key, recordCount);
     }
+
+    @MutationMapping
+    public String generateDownloadUrl(@Argument String s3Key) {
+        return fileRecordService.generateDownloadUrl(s3Key);
+    }
 }
