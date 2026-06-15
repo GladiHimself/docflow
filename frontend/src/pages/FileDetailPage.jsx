@@ -1,16 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client/react';
-import { GET_FILE } from '../graphql/queries';
+import { GET_FILE, GET_ALL_FILES } from '../graphql/queries';
 import { UPDATE_FILE_STATUS, DELETE_FILE } from '../graphql/mutations';
-import { GET_ALL_FILES } from '../graphql/queries';
 
 function FileDetailPage() {
-  // useParams extracts the id from URL (/file/1 → id = "1")
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { loading, error, data } = useQuery(GET_FILE, {
-    variables: { id }  // passes id to the query
+    variables: { id }
   });
 
   const [updateStatus] = useMutation(UPDATE_FILE_STATUS, {
@@ -19,18 +17,16 @@ function FileDetailPage() {
 
   const [deleteFile] = useMutation(DELETE_FILE, {
     refetchQueries: [{ query: GET_ALL_FILES }],
-    onCompleted: () => navigate('/') // go home after delete
+    onCompleted: () => navigate('/')
   });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{color:'red'}}>Error: {error.message}</p>;
+  if (loading) return <p style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>Loading...</p>;
+  if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error.message}</p>;
 
   const file = data.getFile;
 
   const handleStatusUpdate = async (newStatus) => {
-    await updateStatus({
-      variables: { id, status: newStatus }
-    });
+    await updateStatus({ variables: { id, status: newStatus } });
   };
 
   const handleDelete = async () => {
@@ -40,73 +36,178 @@ function FileDetailPage() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.page}>
+      <div style={styles.container}>
 
-      {/* Back button */}
-      <button onClick={() => navigate('/')} style={styles.backBtn}>
-        ← Back
-      </button>
+        {/* Back button */}
+        <button onClick={() => navigate('/')} style={styles.backBtn}>
+          ← Back
+        </button>
 
-      <h2>{file.fileName}</h2>
+        {/* File name */}
+        <h2 style={styles.fileName}>{file.fileName}</h2>
 
-      {/* File details table */}
-      <div style={styles.card}>
-        <Row label="File Type" value={file.fileType} />
-        <Row label="Status" value={file.status} />
-        <Row label="Uploaded At" value={new Date(file.uploadedAt).toLocaleString()} />
-        <Row label="Processed At" value={file.processedAt ? new Date(file.processedAt).toLocaleString() : 'Not yet'} />
-        <Row label="Record Count" value={file.recordCount ?? 'Not yet'} />
-        <Row label="Notes" value={file.notes ?? 'None'} />
-      </div>
-
-      {/* Status update buttons */}
-      <div style={styles.actions}>
-        <h4>Update Status:</h4>
-        <div style={styles.btnGroup}>
-          {['UPLOADED', 'PROCESSING', 'COMPLETED', 'FAILED'].map(status => (
-            <button
-              key={status}
-              onClick={() => handleStatusUpdate(status)}
-              style={{
-                ...styles.statusBtn,
-                opacity: file.status === status ? 0.5 : 1
-              }}
-            >
-              {status}
-            </button>
-          ))}
+        {/* File details card */}
+        <div style={styles.card}>
+          <Row label="File Type" value={file.fileType} />
+          <Row label="Status" value={file.status} highlight />
+          <Row label="Uploaded At" value={new Date(file.uploadedAt).toLocaleString()} />
+          <Row label="Processed At" value={file.processedAt ? new Date(file.processedAt).toLocaleString() : 'Not yet'} />
+          <Row label="Record Count" value={file.recordCount ?? 'Not yet'} />
+          <Row label="Notes" value={file.notes ?? 'None'} />
         </div>
+
+        {/* Status update buttons */}
+        <div style={styles.actionsCard}>
+          <h4 style={styles.actionsTitle}>Update Status</h4>
+          <div style={styles.btnGroup}>
+            {/* COMPLETED removed — our enum uses PROCESSED */}
+            {['UPLOADED', 'PROCESSING', 'PROCESSED', 'FAILED'].map(status => (
+              <button
+                key={status}
+                onClick={() => handleStatusUpdate(status)}
+                style={{
+                  ...styles.statusBtn,
+                  backgroundColor: file.status === status ? '#1a1a2e' : '#f1f5f9',
+                  color: file.status === status ? 'white' : '#374151',
+                  border: file.status === status ? '2px solid #1a1a2e' : '2px solid #e2e8f0',
+                  fontWeight: file.status === status ? '700' : '500',
+                  transform: file.status === status ? 'scale(1.05)' : 'scale(1)',
+                }}
+              >
+                {/* Show checkmark on active status */}
+                {file.status === status ? '✓ ' : ''}{status}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Delete button — centered */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+          <button onClick={handleDelete} style={styles.deleteBtn}>
+            🗑️ Delete File
+          </button>
+        </div>
+
       </div>
-
-      {/* Delete button */}
-      <button onClick={handleDelete} style={styles.deleteBtn}>
-        🗑️ Delete File
-      </button>
-
     </div>
   );
 }
 
-// Small reusable component for detail rows
-function Row({ label, value }) {
+// Row component for detail table
+function Row({ label, value, highlight }) {
   return (
     <div style={styles.row}>
-      <span style={styles.label}>{label}:</span>
-      <span>{value}</span>
+      <span style={styles.rowLabel}>{label}</span>
+      <span style={{
+        ...styles.rowValue,
+        fontWeight: highlight ? '600' : '400',
+        color: highlight ? '#1a1a2e' : '#4b5563',
+      }}>
+        {value}
+      </span>
     </div>
   );
 }
 
 const styles = {
-  container: { maxWidth: '800px', margin: '2rem auto', padding: '0 1rem' },
-  card: { backgroundColor: 'white', borderRadius: '8px', border: '1px solid #ddd', padding: '1.5rem', marginBottom: '1.5rem' },
-  row: { display: 'flex', gap: '1rem', padding: '0.5rem 0', borderBottom: '1px solid #f0f0f0' },
-  label: { fontWeight: 'bold', minWidth: '130px', color: '#555' },
-  actions: { marginBottom: '1rem' },
-  btnGroup: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
-  statusBtn: { padding: '0.5rem 1rem', backgroundColor: '#1a1a2e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
-  deleteBtn: { padding: '0.7rem 1.5rem', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
-  backBtn: { padding: '0.5rem 1rem', marginBottom: '1rem', cursor: 'pointer', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: 'white' },
+  page: {
+    minHeight: '100vh',
+    backgroundColor: '#f0f4f8',
+    backgroundImage: 'radial-gradient(circle at 20% 20%, #e8f0fe 0%, transparent 50%), radial-gradient(circle at 80% 80%, #fce4ec 0%, transparent 50%)',
+    padding: '2rem 0',
+  },
+  container: {
+    maxWidth: '680px',
+    margin: '0 auto',
+    padding: '0 1.5rem',
+  },
+  backBtn: {
+    padding: '0.5rem 1.2rem',
+    marginBottom: '1.2rem',
+    cursor: 'pointer',
+    border: '1.5px solid #e2e8f0',
+    borderRadius: '8px',
+    backgroundColor: '#ffffff',
+    color: '#374151',
+    fontWeight: '600',
+    fontSize: '0.85rem',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+  },
+  fileName: {
+    fontSize: '1.6rem',
+    fontWeight: '800',
+    color: '#1a1a2e',
+    margin: '0 0 1.2rem',
+    letterSpacing: '-0.5px',
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    wordBreak: 'break-all',
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: '16px',
+    border: '1px solid #e2e8f0',
+    padding: '0.5rem 1.5rem',
+    marginBottom: '1.2rem',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+  },
+  row: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.85rem 0',
+    borderBottom: '1px solid #f1f5f9',
+  },
+  rowLabel: {
+    fontWeight: '600',
+    fontSize: '0.85rem',
+    color: '#6b7280',
+    minWidth: '130px',
+    letterSpacing: '0.3px',
+  },
+  rowValue: {
+    fontSize: '0.9rem',
+    textAlign: 'right',
+  },
+  actionsCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: '16px',
+    border: '1px solid #e2e8f0',
+    padding: '1.5rem',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+  },
+  actionsTitle: {
+    margin: '0 0 1rem',
+    fontSize: '0.95rem',
+    fontWeight: '700',
+    color: '#1a1a2e',
+    letterSpacing: '0.3px',
+  },
+  btnGroup: {
+    display: 'flex',
+    gap: '0.6rem',
+    flexWrap: 'wrap',
+  },
+  statusBtn: {
+    padding: '0.5rem 1.1rem',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '0.82rem',
+    letterSpacing: '0.5px',
+    transition: 'all 0.2s ease',
+  },
+  deleteBtn: {
+    padding: '0.75rem 2rem',
+    backgroundColor: '#ef4444',
+    color: 'white',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '0.95rem',
+    boxShadow: '0 4px 12px rgba(239,68,68,0.3)',
+    transition: 'all 0.2s ease',
+  },
 };
 
 export default FileDetailPage;
