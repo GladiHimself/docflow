@@ -7,6 +7,7 @@ type FileRecord {
     notes: String
     uploadedAt: String!
     processedAt: String
+    s3Key: String
 }
 
 enum FileStatus {
@@ -34,4 +35,5 @@ type Mutation {
     updateFileStatus(id: ID!, status: FileStatus!): FileRecord
     deleteFile(id: ID!): Boolean
     updateFileByS3Key(s3Key: String!, recordCount: Int!): FileRecord
+    generateDownloadUrl(s3Key: String!): String!
 }

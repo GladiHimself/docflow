@@ -26,6 +26,7 @@ export const GET_FILE = gql`
             processedAt
             recordCount
             notes
+            s3Key
         }
     }
 `;

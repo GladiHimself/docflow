@@ -40,3 +40,10 @@ export const REQUEST_UPLOAD = gql`
     }
   }
 `;
+
+//download url mutation
+export const GENERATE_DOWNLOAD_URL = gql`
+  mutation GenerateDownloadUrl($s3Key: String!) {
+    generateDownloadUrl(s3Key: $s3Key)
+  }
+`;

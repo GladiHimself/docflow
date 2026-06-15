@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Service;
 
 import com.docflow.backend.entity.FileRecord;
@@ -54,6 +56,10 @@ public class FileRecordService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String generateDownloadUrl(String s3Key) {
+        return s3Service.generatePresignedDownloadUrl(s3Key);
     }
 
     // New mthod - create file record and generate S3 uplaod URL
